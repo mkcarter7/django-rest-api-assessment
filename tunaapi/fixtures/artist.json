@@ -1,0 +1,29 @@
+[
+  {
+      "model": "tunaapi.artist",
+      "pk": 1,
+      "fields": {
+          "name": "Morgan Wallen",
+          "age": "31",
+          "bio": "Thought You Should Know"
+      }
+  },
+  {
+    "model": "tunaapi.artist",
+    "pk": 2,
+    "fields": {
+        "name": "Benson Boone",
+        "age": "22",
+        "bio": "Been Doin Better"
+    }
+},
+{
+  "model": "tunaapi.artist",
+  "pk": 3,
+  "fields": {
+      "name": "Luke Bryan",
+      "age": "48",
+      "bio": "Just What You See"
+  }
+}
+]
