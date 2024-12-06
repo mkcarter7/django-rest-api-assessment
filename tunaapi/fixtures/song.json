@@ -1,0 +1,32 @@
+[
+{
+  "model": "tunaapi.song",
+  "pk": 1,
+  "fields": {
+  "title": "Love Somebody",
+  "artist_id": "1",
+  "album": "Love Somebody",
+  "length": 324
+    }
+},
+{
+  "model": "tunaapi.song",
+  "pk":2,
+  "fields":{
+  "title": "Beautiful Things",
+  "artist_id": "2",
+  "album": "Fireworks & Rollerblades",
+  "length": 313
+  }
+},
+{
+  "model":"tunaapi.song",
+  "pk": 3,
+  "fields":{
+  "title": "One Margarita",
+  "artist_id": "3",
+  "album": "Luke Bryan",
+  "length": 330
+  }
+}
+]
