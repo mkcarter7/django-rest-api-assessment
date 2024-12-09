@@ -16,8 +16,8 @@ class SongGenreView(ViewSet):
             Response -- JSON serialized type
         """
         try:
-            songGenre = SongGenre.objects.get(pk=pk)
-            serializer = SongGenreSerializer(songGenre)
+            song_genre = SongGenre.objects.get(pk=pk)
+            serializer = SongGenreSerializer(song_genre)
             return Response(serializer.data)
         except SongGenre.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
@@ -28,8 +28,8 @@ class SongGenreView(ViewSet):
         Returns:
             Response -- JSON serialized list of types
         """
-        songGenres = SongGenre.objects.all()
-        serializer = SongGenreSerializer(songGenres, many=True)
+        song_genres = SongGenre.objects.all()
+        serializer = SongGenreSerializer(song_genres, many=True)
         return Response(serializer.data)    
 def create(self, request):
         """Handle POST operations
