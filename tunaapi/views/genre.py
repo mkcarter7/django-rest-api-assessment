@@ -3,7 +3,7 @@ from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from tunaapi.models import Genre, genre
+from tunaapi.models import Genre
 
 
 class GenreView(ViewSet):
@@ -16,8 +16,8 @@ class GenreView(ViewSet):
             Response -- JSON serialized type
         """
         try:
-            song = Genre.objects.get(pk=pk)
-            serializer = GenreSerializer(song)
+            genre = Genre.objects.get(pk=pk)
+            serializer = GenreSerializer(genre)
             return Response(serializer.data)
         except Genre.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
@@ -28,9 +28,8 @@ class GenreView(ViewSet):
         Returns:
             Response -- JSON serialized list of game types
         """
-        genres = genre.objects.all()
-        
-        serializer = GenreSerializer(genre, many=True)
+        genres = Genre.objects.all()
+        serializer = GenreSerializer(genres, many=True)
         return Response(serializer.data)
     
     def create(self, request):
@@ -39,8 +38,8 @@ class GenreView(ViewSet):
         Returns
             Response -- JSON serialized instance
         """
-        genre = genre.objects.create(
-            description=request.data["description"],
+        genre = Genre.objects.create(
+        description=request.data["description"],
         )
         serializer = GenreSerializer(genre)
         return Response(serializer.data)
@@ -52,8 +51,7 @@ class GenreView(ViewSet):
             Response -- Empty body with 204 status code
         """
 
-        genre = genre.objects.get(pk=pk)
-        genre.id = genre.id
+        genre = Genre.objects.get(pk=pk)
         genre.description = request.data["description"]
         
         genre.save()
@@ -69,6 +67,6 @@ class GenreSerializer(serializers.ModelSerializer):
     """JSON serializer for game types
     """
     class Meta:
-        model = genre
+        model = Genre
         fields = ('id', 'description')
         depth = 1

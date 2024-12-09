@@ -39,13 +39,15 @@ class SongView(ViewSet):
         Returns
             Response -- JSON serialized instance
         """
-        artist_id = Artist.objects.get(pk=request.data["artist_id"])
+        artist = Artist.objects.get(pk=request.data["artist"])
+
         song = Song.objects.create(
-            title=request.data["title"],
-            artist_id=artist_id,
-            album=request.data["album"],
-            length=request.data["length"],
+        title=request.data["title"],
+        artist=artist,
+        album=request.data["album"],
+        length=request.data["length"],
         )
+
         serializer = SongSerializer(song)
         return Response(serializer.data)
     
@@ -60,10 +62,11 @@ class SongView(ViewSet):
         song.title = request.data["title"]
         song.album = request.data["album"]
         song.length = request.data["length"]
-        
+        artist = Artist.objects.get(pk=request.data["artist"])
+        song.artist = artist
         song.save()
-
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        
+        return Response(None, status=status.HTTP_204_NO_CONTENT)    
     
     def destroy(self, request, pk):
         song = Song.objects.get(pk=pk)
@@ -75,13 +78,5 @@ class SongSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Song
-        fields = ('id', 'title', 'aritst_id', 'length')
+        fields = ('id', 'title', 'aritst', 'album', 'length')
         depth = 1
-
-class SingleSongSerializer(serializers.ModelSerializer):
-  """JSON serializer for song types
-    """
-  class Meta:
-      model = Song
-      fields = ('id', 'title', 'artist_id', 'album', 'length', 'genres')
-      depth = 2
