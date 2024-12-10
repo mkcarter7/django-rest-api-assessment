@@ -18,7 +18,7 @@ class GenreView(ViewSet):
         """
         try:
             genre = Genre.objects.get(pk=pk)
-            songs = Song.objects.filter(genresongs__genre_id=genre)
+            songs = Song.objects.filter(songgenres__genre_id=genre)
             genre.songs=songs.all()
             serializer = SingleGenreSerializer(genre)
             return Response(serializer.data)
@@ -64,7 +64,7 @@ class GenreView(ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def destroy(self, request, pk):
-        genre = genre.objects.get(pk=pk)
+        genre = Genre.objects.get(pk=pk)
         genre.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
             
@@ -85,7 +85,7 @@ class SongSerializer(serializers.ModelSerializer):
 
 class SingleGenreSerializer(serializers.ModelSerializer):
         songs = SongSerializer(read_only=True, many=True)
-class Meta:
-        model = Genre
-        fields = ('id', 'description', 'songs')
-        depth = 1
+        class Meta:
+            model = Genre
+            fields = ('id', 'description', 'songs')
+            depth = 1

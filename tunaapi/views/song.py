@@ -17,9 +17,9 @@ class SongView(ViewSet):
         """
         try:
             song = Song.objects.get(pk=pk)
-            genres = Genre.objects.filter(songgenres__song_id=song)
+            genres = Genre.objects.filter(genresongs__song_id=song)
             song.genres=genres.all()
-            serializer = SongSerializer(song)
+            serializer = SingleSongSerializer(song)
             return Response(serializer.data)
         except Song.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
@@ -45,9 +45,9 @@ class SongView(ViewSet):
 
         song = Song.objects.create(
         title=request.data["title"],
-        artist=artist,
         album=request.data["album"],
         length=request.data["length"],
+        artist=artist
         )
 
         serializer = SongSerializer(song)
@@ -65,11 +65,11 @@ class SongView(ViewSet):
         song.album = request.data["album"]
         song.length = request.data["length"]
         artist = Artist.objects.get(pk=request.data["artist_id"])
-        song.artist = artist.id
+        song.artist_id = artist.id
         song.save()
         
         serializer = SongSerializer(song)  
-        return Response(None, status=status.HTTP_204_NO_CONTENT)    
+        return Response(serializer.data, status=status.HTTP_200_OK)    
     
     def destroy(self, request, pk):
         song = Song.objects.get(pk=pk)
@@ -81,14 +81,7 @@ class SongSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Song
-        fields = ('id', 'title', 'aritst', 'album', 'length')
-        depth = 1
-
-class GenreSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Genre
-        fields = ('id', 'description')
+        fields = ('id', 'title', 'artist_id', 'album', 'length')
         depth = 1
 
 class GenreSerializer(serializers.ModelSerializer):
