@@ -16,8 +16,8 @@ class SongGenreView(ViewSet):
             Response -- JSON serialized type
         """
         try:
-            song_genre = SongGenre.objects.get(pk=pk)
-            serializer = SongGenreSerializer(song_genre)
+            songGenre = SongGenre.objects.get(pk=pk)
+            serializer = SongGenreSerializer(songGenre)
             return Response(serializer.data)
         except SongGenre.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
@@ -28,43 +28,44 @@ class SongGenreView(ViewSet):
         Returns:
             Response -- JSON serialized list of types
         """
-        song_genres = SongGenre.objects.all()
-        serializer = SongGenreSerializer(song_genres, many=True)
+        songGenres = SongGenre.objects.all()
+        serializer = SongGenreSerializer(songGenres, many=True)
         return Response(serializer.data)    
-def create(self, request):
+    
+    def create(self, request):
         """Handle POST operations
 
         Returns
             Response -- JSON serialized songGenre instance
         """
-        songId = Song.objects.get(pk=request.data["song_id"])
-        genreId = Genre.objects.get(pk=request.data["genre_id"])
+        songI = Song.objects.get(pk=request.data["song_id"])
+        genreI = Genre.objects.get(pk=request.data["genre_id"])
 
         songGenre = SongGenre.objects.create(
-            song_id=songId,
-            genre_id=genreId,
+            song=songI,
+            genre=genreI,
         )
         serializer = SongGenreSerializer(songGenre)
         return Response(serializer.data)
     
-def update(self, request, pk):
+    def update(self, request, pk):
         """Handle PUT requests for a songGenre
 
         Returns:
             Response -- Empty body with 204 status code
         """
-        songId = Song.objects.get(pk=request.data["song_id"])
-        genreId = Genre.objects.get(pk=request.data["genre_id"])
+        songI = Song.objects.get(pk=request.data["song"])
+        genreI = Genre.objects.get(pk=request.data["genre"])
         
         songGenre = SongGenre.objects.get(pk=pk)
-        songGenre.song_id = songId
-        songGenre.genre_id = genreId
+        songGenre.song = songI
+        songGenre.genre = genreI
 
         songGenre.save()
 
         return Response(None, status=status.HTTP_204_NO_CONTENT)
     
-def destroy(self, request, pk):
+    def destroy(self, request, pk):
         songGenre = SongGenre.objects.get(pk=pk)
         songGenre.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
@@ -74,5 +75,5 @@ class SongGenreSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = SongGenre
-        fields = ('id', 'song_id', 'genre_id' )
+        fields = ('id', 'song', 'genre' )
         depth = 1

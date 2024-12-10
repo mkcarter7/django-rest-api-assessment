@@ -3,5 +3,5 @@ from .song import Song
 from .genre import Genre
 
 class SongGenre(models.Model):  # Must inherit from this base class
-    song_id = models.ForeignKey(Song, on_delete=models.CASCADE)
-    genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name="song_genres")
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name="genre_songs")

@@ -4,6 +4,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from tunaapi.models import Genre
+from tunaapi.models import Song
 
 
 class GenreView(ViewSet):
@@ -17,7 +18,9 @@ class GenreView(ViewSet):
         """
         try:
             genre = Genre.objects.get(pk=pk)
-            serializer = GenreSerializer(genre)
+            songs = Song.objects.filter(genresongs__genre_id=genre)
+            genre.songs=songs.all()
+            serializer = SingleGenreSerializer(genre)
             return Response(serializer.data)
         except Genre.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
@@ -42,21 +45,23 @@ class GenreView(ViewSet):
         description=request.data["description"],
         )
         serializer = GenreSerializer(genre)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def update(self, request, pk):
-        """Handle PUT requests for an event
+        """Handle PUT requests for a genre
 
-        Returns
+        Returns:
             Response -- Empty body with 204 status code
         """
 
+        id = pk
         genre = Genre.objects.get(pk=pk)
         genre.description = request.data["description"]
-        
+
         genre.save()
 
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        serializer = GenreSerializer(genre)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def destroy(self, request, pk):
         genre = genre.objects.get(pk=pk)
@@ -69,4 +74,18 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ('id', 'description')
+        depth = 1
+        
+class SongSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Song
+        fields = ('id', 'title', 'artist_id', 'album', 'length')
+        depth = 1
+
+class SingleGenreSerializer(serializers.ModelSerializer):
+        songs = SongSerializer(read_only=True, many=True)
+class Meta:
+        model = Genre
+        fields = ('id', 'description', 'songs')
         depth = 1
