@@ -45,7 +45,7 @@ class ArtistView(ViewSet):
         bio=request.data["bio"],
         )
         serializer = ArtistSerializer(artist)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def update(self, request, pk):
         """Handle PUT requests for an artist
@@ -59,9 +59,9 @@ class ArtistView(ViewSet):
         artist.age=request.data["age"]
         artist.bio=request.data["bio"]
         artist.save()
+        serializer = ArtistSerializer(artist)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
-    
     def destroy(self, request, pk):
         artist = Artist.objects.get(pk=pk)
         artist.delete()
@@ -72,6 +72,6 @@ class ArtistSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Artist
-        fields = ('id', 'name', 'age', 'bio', 'songs')
+        fields = ('id', 'name', 'age', 'bio')
         depth = 1
         
