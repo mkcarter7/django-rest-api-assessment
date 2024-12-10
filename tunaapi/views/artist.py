@@ -4,6 +4,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from tunaapi.models import Artist
+from tunaapi.models import Song
 
 
 class ArtistView(ViewSet):
@@ -17,6 +18,8 @@ class ArtistView(ViewSet):
         """
         try:
             artist = Artist.objects.get(pk=pk)
+            song_count = Song.objects.filter(artist=artist).count()
+            artist.song_count = song_count
             serializer = ArtistSerializer(artist)
             return Response(serializer.data)
         except Artist.DoesNotExist as ex:
@@ -70,8 +73,23 @@ class ArtistView(ViewSet):
 class ArtistSerializer(serializers.ModelSerializer):
     """JSON serializer for artists
     """
+    song_count = serializers.SerializerMethodField()
     class Meta:
         model = Artist
-        fields = ('id', 'name', 'age', 'bio')
+        fields = ('id', 'name', 'age', 'bio', 'song_count', 'songs')
         depth = 1
         
+    def get_song_count(self, obj):
+        return obj.songs.count()
+        
+class SingleArtistSerializer(serializers.ModelSerializer):
+    """JSON serializer for artist types
+    """
+    song_count = serializers.IntegerField(default=None)
+    class Meta:
+        model = Artist
+        fields = ('id', 'name', 'age', 'bio', 'song_count', 'songs')
+        depth = 1
+       
+    def get_song_count(self, obj):
+        return obj.songs.count()
